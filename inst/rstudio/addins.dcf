@@ -1,0 +1,25 @@
+Name: Convert Path
+Description: Convert Windows-style path into Unix path
+Binding: pathConverterAddin
+Interactive: false
+
+Name: Create Slides
+Description: Generate Slides from Markdown File
+Binding: slidesAddin
+Interactive: true
+
+
+Name: Create PDF
+Description: Generate PDF from Markdown File
+Binding: pdfAddin
+Interactive: true
+
+Name: Compile Packages
+Description: Compile R Packages
+Binding: buildPackageAddin
+Interactive: true
+
+Name: Reformat Code
+Description: Reformat R Code
+Binding: reformatAddin
+Interactive: true
