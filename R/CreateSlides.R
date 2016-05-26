@@ -28,7 +28,7 @@ function(message) {
  				textInput("fn", "Input File:", doc, placeholder = "Input [R]md file name here"),
 	      stableColumnLayout(
 					actionButton("actDoc", "Use Active Document"),				
-					actionButton("paste", "Paste Path"),
+					actionButton("paste", "Paste Path")
 				),		
 				tags$hr(),
 	      radioButtons("slidetype", "Slide Type",

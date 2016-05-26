@@ -133,7 +133,7 @@ createPDFSlides <- function(fn, pandoc_cmd = '', template = 'default.context',
   }
   
   # convert to context format
-  fn_tex = sub('\\.(.+)$', '.tex', fn)
+  fn_tex = sub('\\.[^\\.]+$', '.tex', fn)
   #rmarkdown:::find_pandoc()  --chapters -N 
   args = sprintf('-S -s %s -f markdown %s -w context -o %s --data-dir=d:\\tools\\pandoc\\data --template=%s', 
                  pandoc_cmd, shQuote(fn), shQuote(fn_tex), template)
