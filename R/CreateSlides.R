@@ -99,6 +99,8 @@ gen_slides <- function(input) {
 }
 
 # Try running
+#library(shiny)
+#library(miniUI)
 #slidesAddin()
 
 

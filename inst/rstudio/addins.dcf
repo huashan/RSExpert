@@ -23,3 +23,8 @@ Name: Reformat Code
 Description: Reformat R Code
 Binding: reformatAddin
 Interactive: true
+
+Name: Insert Header
+Description: Insert Header into R Script File
+Binding: insertHeaderAddin
+Interactive: true 
