@@ -9,9 +9,27 @@
 pathConverterAddin <- function() {
   fn <- readLines("clipboard", warn = FALSE)
   # True 文件夹，False 文件， NA 非法名称
-  if (!is.na(file.info(fn)$isdir)) {
-    fn<-gsub("\\", "/", fn, fixed = T)
-    writeClipboard(fn, format = 1)
+  fn <- fn[!is.na(file.info(fn)$isdir)]
+  fn <- base::gsub('\\', "/", fn, fixed = T)
+  #if (!is.na(file.info(fn)$isdir)) {
+    #fn <- gsub("\\", "/", fn, fixed = T)
+    #writeClipboard(fn, format = 1)
+  #}
+  rstudioapi::insertText(paste0('"', fn, '"', collapse = ',\n'))
+}
+
+#' 
+#' 
+readFileAddin <- function() {
+  fn <- readLines("clipboard", warn = FALSE)
+  fn <- base::gsub('\\', "/", fn, fixed = T)
+  doReadFile <- function(x) {
+    ptn <- stringr::str_match(toupper(x), '\\.([^.]+?)$')[, 2]
+  	switch (ptn,
+  	  'RDATA' = rstudioapi::insertText(text = sprintf('load("%s")\n', x)),
+  	  'RDS' = rstudioapi::insertText(text = sprintf('dat <- readRDS("%s")\n', x)),
+  	   warning(sprintf('%s is not a valid R data fromat, currently RData/RDS are supported', ptn))
+  	) 
   }
-  rstudioapi::insertText(fn)
+  invisible(lapply(fn, doReadFile))
 }

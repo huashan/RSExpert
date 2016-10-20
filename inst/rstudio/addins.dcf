@@ -3,6 +3,11 @@ Description: Convert Windows-style path into Unix path
 Binding: pathConverterAddin
 Interactive: false
 
+Name: Read R Data Files
+Description: Generate Code for Reading R Data
+Binding: readFileAddin
+Interactive: false
+
 Name: Create Slides
 Description: Generate Slides from Markdown File
 Binding: slidesAddin

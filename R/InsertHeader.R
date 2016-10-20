@@ -9,15 +9,20 @@ insertHeaderAddin <- function() {
 init_template <- function() {
 	require(stringr)
 	fn <- file.path(system.file('', package = 'RSExpert'), 'config/CodeTemplates.txt')
-	temp <- readLines(fn, warn = F)
+	
+	con = file(fn, encoding = 'UTF-8')
+	on.exit(close(con), add = TRUE)
+	temp <- readLines(con, warn = F)
+	
 	idx <- grep('^---', temp)
 	
 	if (length(idx) == 0) return(NULL)
 	
 	temp_names <- str_match(temp[idx], '^---(.*)')[, 2]	  
 	temp <- select_template(temp, idx, 1)
-	vars <- str_match_all(temp, '\\%(.+?)\\%')
-	vars <- do.call(rbind, vars)[, 2]
+	vars <- str_match_all(temp, '\\%(.+?)(=.+?)?\\%')
+	vars <- do.call(rbind, vars)[, c(2, 3)]
+	vars[, 2] <- sub('=', '', vars[, 2], fixed=TRUE)
 	list(vars=vars, template=temp) # temp: char vector of template text
 }
 
@@ -48,15 +53,20 @@ insertHeaderGadget <- function(doc) {
       stopApp()
     }
     
-    nvars <- length(ret$vars)
+    nvars <- nrow(ret$vars)
     
   	observeEvent(input$done, {
   	  
   	  for (i in 1:nvars) {
-  		  varname <- ret$vars[i]
-  		  ret$template <- sub(sprintf('%%%s%%', varname), input[[varname]], ret$template)
+  		  varname <- ret$vars[i, 1]
+  		  #print(input[[varname]])
+  		  #print(Encoding(input[[varname]]))
+  		  ret$template <- sub(sprintf('%%%s%%', varname), input[[varname]], ret$template)#, fixed = TRUE)
+  		  if (Encoding(input[[varname]]) == 'UTF-8') Encoding(ret$template) <- 'UTF-8'
+  		  print(ret$template)
+  		  #message('enc2: ', Encoding(ret$template))
   	  }
-  	  
+  	  # 处理模板中的嵌入代码 
   	  codes <- do.call(rbind, str_match_all(ret$template, '`(.+?)`'))[, 2]
   	  codes_ret <- lapply(codes, function(x) eval(parse(text = x)))
   	  for (i in 1:length(codes)) {
@@ -76,24 +86,26 @@ insertHeaderGadget <- function(doc) {
   	})
 		
 		output$inputGroup = renderUI({
-      input_list <- lapply(1:nvars, function(i) {
-        inputName <- ret$vars[i]
-        textInput(inputName, inputName, "")
+		  cat(ret$vars)
+      input_list <- lapply(seq_len(nvars), function(i) {
+        inputName <- ret$vars[i, 1]
+        prevalue <- ret$vars[i, 2]
+        textInput(inputName, inputName, prevalue)
       })
       do.call(tagList, input_list)
     })
     
     }
 
-  #viewer <- paneViewer(300)  # paneViewer dialogViewer browserViewer
-  viewer <- dialogViewer('Insert Header')
+  viewer <- paneViewer(300)  # paneViewer dialogViewer browserViewer
+  #viewer <- dialogViewer('Insert Header')
   runGadget(ui, server, viewer = viewer)
 
 }
 
 # Try running
-# library(shiny)
-# library(miniUI)
-# insertHeaderAddin()
+#library(shiny)
+#library(miniUI)
+#insertHeaderAddin()
 
 
